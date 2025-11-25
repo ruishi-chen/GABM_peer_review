@@ -7,10 +7,43 @@ This repository explores **how generative agent-based models (GABM)** can be use
   - Plug that into a simple agent-based simulation where reviewer agents (human-like vs. LLM-like) generate reviews and panel decisions.  
   - Vary the **mix of human vs. agent reviewers** to study how conference-level decisions and fairness metrics might shift.
 
+## Setup
+
+- **Python environment**
+  - Create / activate an environment (example with Conda):
+
+    ```bash
+    conda create -n llm-abm python=3.10
+    conda activate llm-abm
+    ```
+
+  - Install dependencies (minimal set for the current code):
+
+    ```bash
+    pip install openreview-py pandas requests pdfplumber tqdm python-dotenv
+    ```
+
+- **Secrets and local data (not committed)**
+  - Create a `.env` file in the repo root (this file is in `.gitignore`, so it will **not** be pushed to GitHub):
+
+    ```text
+    OPENREVIEW_USERNAME=your_openreview_username
+    OPENREVIEW_PASSWORD=your_openreview_password
+    ```
+
+  - The notebooks read these values via `python-dotenv` and `os.environ`, so you never need to hard-code credentials in notebooks.
+  - Large data (raw PDFs, parsed XML, and large review CSVs) are **kept local** and ignored by git:
+    - `ICLR2025_papers/`
+    - `ICLR2025_human_reviews.csv`
+    - `ICLR2025_human_reviews_with_decision.csv`
+
 ## Files and workflow
 
 - **`00_download_PDFs/00_Get_PDF_url.ipynb`**  
   - Uses the OpenReview API to fetch **all ICLR 2025 submissions**, explore their metadata (titles, abstracts, etc.), and build a CSV of paper IDs and PDF URLs (`2025_iclr_pdfs_urls.csv`).
+  - Before running, ensure:
+    - Your environment is activated (`conda activate llm-abm` or equivalent).
+    - `.env` is created with valid `OPENREVIEW_USERNAME` / `OPENREVIEW_PASSWORD`.
 
 - **`00_download_PDFs/01_get_and_parse_PDF.py`**  
   - Script to **download all ICLR 2025 PDFs** listed in `2025_iclr_pdfs_urls.csv` and parse them with a running **Grobid** server.  
